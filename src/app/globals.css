@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --burgundy: #5c1428;
+  --burgundy-dalam: #2e0a17;
+  --gold: #c8a02e;
+  --gold-muda: #e7ce8a;
+  --krem: #faf6ef;
+  --tinta: #1a1215;
+  --bar-bawah: 4.5rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background-color: var(--krem);
+    color: var(--tinta);
+    overscroll-behavior-y: none;
+  }
+  /* Ruang untuk bar menu bawah di HP + area aman iPhone/Android gesture bar */
+  main {
+    padding-bottom: calc(var(--bar-bawah) + env(safe-area-inset-bottom) + 1rem);
+  }
+  @media (min-width: 768px) {
+    main { padding-bottom: 0; }
+  }
+  ::selection { background: var(--gold); color: var(--burgundy-dalam); }
+  :focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  /* ——— Tanda tangan visual: lengkung gerbang Madura ——— */
+  .gerbang {
+    border-top-left-radius: 999px 340px;
+    border-top-right-radius: 999px 340px;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+  }
+  .gerbang-kecil {
+    border-top-left-radius: 999px 120px;
+    border-top-right-radius: 999px 120px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  /* Garis sulur emas — pemisah antar bagian */
+  .sulur {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold) 18%, var(--gold) 82%, transparent);
+    opacity: .55;
+  }
+
+  /* Tekstur sarang madu (nod ke Battar Madu) */
+  .madu {
+    background-image:
+      radial-gradient(circle at 50% 0, rgba(200,160,46,.10) 0 2px, transparent 2px),
+      radial-gradient(circle at 0 50%, rgba(200,160,46,.10) 0 2px, transparent 2px);
+    background-size: 26px 26px;
+  }
+
+  .label {
+    font-size: .68rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .kartu {
+    background: #fff;
+    border: 1px solid rgba(46,10,23,.08);
+    box-shadow: 0 1px 2px rgba(46,10,23,.05);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .kartu:hover {
+    transform: translateY(-3px);
+    border-color: rgba(200,160,46,.5);
+    box-shadow: 0 16px 40px -22px rgba(46,10,23,.45);
+  }
+
+  .tombol-utama {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--burgundy); color: var(--krem);
+    padding: .8rem 1.4rem; border-radius: 999px;
+    font-weight: 600; letter-spacing: .01em;
+    transition: background .2s ease, transform .2s ease;
+  }
+  .tombol-utama:hover { background: var(--burgundy-dalam); transform: translateY(-1px); }
+
+  .tombol-emas {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: linear-gradient(135deg, #d9b855, var(--gold));
+    color: var(--burgundy-dalam);
+    padding: .8rem 1.4rem; border-radius: 999px; font-weight: 700;
+    transition: filter .2s ease, transform .2s ease;
+  }
+  .tombol-emas:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+  .prosa p { margin-bottom: 1rem; line-height: 1.8; }
+  .prosa h2 { font-size: 1.35rem; font-weight: 700; margin: 1.6rem 0 .6rem; }
+  .prosa ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 1rem; }
+  .prosa a { color: var(--burgundy); text-decoration: underline; text-underline-offset: 3px; }
+}
+
+/* Hormati preferensi kurangi gerak */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
