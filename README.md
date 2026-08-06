@@ -25,8 +25,14 @@ di `src/lib/contoh.js`. Hapus isinya setelah konten asli masuk ke Firestore.
 3. **Build → Authentication → Sign-in method → Google → Enable**
 4. **⚙ Project settings → Service accounts → Generate new private key**
    Ambil `project_id`, `client_email`, `private_key` → masukkan ke `.env.local`
-5. **Firestore → Rules** → tempel isi `firestore.rules`, ganti email admin, Publish
-6. Isi `ADMIN_EMAILS` dengan email Gmail yang boleh menerbitkan konten
+5. **Firestore → Rules** → tempel isi `firestore.rules` apa adanya → **Publish**
+6. `ADMIN_EMAILS` sudah berisi `muhyibcp@gmail.com` — isikan nilai yang sama di Vercel
+
+> Email pengelola (`muhyibcp@gmail.com`) tertulis di **dua tempat** dan keduanya harus sama:
+> `ADMIN_EMAILS` di environment (dipakai server saat menyimpan konten) dan daftar di
+> `firestore.rules` (dipakai Firestore saat membaca aspirasi). Kalau nanti mau menambah
+> pengelola lain, tambahkan di dua tempat itu juga — `ADMIN_EMAILS` dipisah koma,
+> `firestore.rules` dipisah koma di dalam kurung siku.
 
 Indeks yang perlu dibuat (Firestore akan menawarkan tautannya saat pertama error):
 `berita: terbit ASC + tanggal DESC` dan `event: terbit ASC + tanggal DESC`.

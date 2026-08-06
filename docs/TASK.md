@@ -41,7 +41,7 @@ Status: ✅ selesai di paket ini · ⬜ dikerjakan om Muhyi (butuh akun/kunci) �
 2. ⬜ Buat *service account* → salin `project_id`, `client_email`, `private_key`
 3. ⬜ Daftar akun Cloudinary → salin `cloud_name`, `api_key`, `api_secret`
 4. ⬜ Salin `.env.example` → isi `.env.local`; isi juga di Vercel → Settings → Environment Variables
-5. ⬜ Ganti `email-admin@gmail.com` di `.env` **dan** di `firestore.rules` dengan email Gmail om
+5. ✅ Email pengelola sudah terpasang: `muhyibcp@gmail.com` — di `.env.example` dan `firestore.rules`. Pastikan email yang sama diisi di variabel `ADMIN_EMAILS` pada Vercel.
 6. ⬜ Terapkan `firestore.rules` di Firebase Console → Firestore → Rules
 7. ⬜ Ganti `public/foto-muhyi.jpg` dengan foto asli (potret, minimal 800×1000)
 8. ⬜ Push ke GitHub → hubungkan repo di Vercel → deploy
