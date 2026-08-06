@@ -9,15 +9,12 @@ import PWARegister from '@/components/PWARegister';
 
 const display = Fraunces({
   subsets: ['latin'],
-  weight: ['400', '600', '700', '900'],
-  axes: ['SOFT', 'WONK', 'opsz'],
   variable: '--font-display',
   display: 'swap',
 });
 
 const body = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
   variable: '--font-body',
   display: 'swap',
 });
