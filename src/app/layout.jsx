@@ -52,6 +52,7 @@ export const metadata = {
     apple: '/icons/icon-192.png',
   },
   appleWebApp: { capable: true, title: site.nama, statusBarStyle: 'black-translucent' },
+  other: { 'mobile-web-app-capable': 'yes' },
   robots: { index: true, follow: true },
 };
 
