@@ -10,6 +10,9 @@
   --krem: #faf6ef;
   --tinta: #1a1215;
   --bar-bawah: 4.5rem;
+  /* Tinggi kartu "Pasang di HP". Diisi otomatis saat kartunya tampil,
+     supaya tombol melayang naik dan tidak saling menimpa. */
+  --tawaran-pasang: 0px;
 }
 
 @layer base {
