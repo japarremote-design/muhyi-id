@@ -18,10 +18,13 @@ export default function FloatingActions() {
 
   return (
     <div
-      className={`fixed right-4 z-40 flex flex-col items-end gap-3 transition-all duration-500 ${
+      className={`fixed right-4 z-40 flex flex-col items-end gap-3 transition-all duration-300 ${
         tampil ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
       }`}
-      style={{ bottom: 'calc(var(--bar-bawah) + env(safe-area-inset-bottom) + 0.9rem)' }}
+      style={{
+        bottom:
+          'calc(var(--bar-bawah) + env(safe-area-inset-bottom) + 0.9rem + var(--tawaran-pasang))',
+      }}
     >
       {/* Aspirasi — buku + ballpen */}
       <Link

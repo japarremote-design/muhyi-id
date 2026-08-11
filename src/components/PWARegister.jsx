@@ -1,11 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Ikon from './Ikon';
 import Logo from './Logo';
 
 export default function PWARegister() {
   const [prompt, setPrompt] = useState(null);
   const [tampil, setTampil] = useState(false);
+  const kartu = useRef(null);
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -19,6 +20,25 @@ export default function PWARegister() {
     window.addEventListener('beforeinstallprompt', onPrompt);
     return () => window.removeEventListener('beforeinstallprompt', onPrompt);
   }, []);
+
+  /* Beri tahu tombol melayang setinggi apa kartu ini, supaya mereka naik. */
+  useEffect(() => {
+    const akar = document.documentElement;
+    if (!tampil) {
+      akar.style.setProperty('--tawaran-pasang', '0px');
+      return;
+    }
+    const ukur = () => {
+      const t = kartu.current?.offsetHeight || 0;
+      akar.style.setProperty('--tawaran-pasang', `${t + 12}px`);
+    };
+    ukur();
+    window.addEventListener('resize', ukur);
+    return () => {
+      window.removeEventListener('resize', ukur);
+      akar.style.setProperty('--tawaran-pasang', '0px');
+    };
+  }, [tampil]);
 
   const pasang = async () => {
     if (!prompt) return;
@@ -37,8 +57,9 @@ export default function PWARegister() {
 
   return (
     <div
-      className="fixed inset-x-3 z-50 animate-naik rounded-2xl border border-gold-500/30 bg-burgundy-900 p-4 shadow-arch md:left-auto md:right-4 md:w-80"
-      style={{ bottom: 'calc(var(--bar-bawah) + env(safe-area-inset-bottom) + 5.5rem)' }}
+      ref={kartu}
+      className="fixed inset-x-3 z-40 animate-naik rounded-2xl border border-gold-500/30 bg-burgundy-900 p-4 shadow-arch md:left-auto md:right-4 md:w-80"
+      style={{ bottom: 'calc(var(--bar-bawah) + env(safe-area-inset-bottom) + 0.75rem)' }}
       role="dialog"
       aria-label="Pasang aplikasi muhyi.id"
     >
