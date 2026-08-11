@@ -54,15 +54,13 @@ export async function ambilKoleksi(nama, { batas = 24, urut = 'tanggal' } = {}) 
   const query = {
     from: [{ collectionId: nama }],
     orderBy: [{ field: { fieldPath: urut }, direction: 'DESCENDING' }],
-    limit: batas,
+    limit: batas + 20, // ambil lebih dulu, draf disaring sesudahnya
   };
-  if (nama === 'berita' || nama === 'event') {
-    query.where = {
-      fieldFilter: { field: { fieldPath: 'terbit' }, op: 'EQUAL', value: { booleanValue: true } },
-    };
-  }
   try {
-    const hasil = await jalankan(query);
+    let hasil = await jalankan(query);
+    // Saring di sini, bukan lewat kueri — supaya tidak butuh indeks gabungan Firestore.
+    hasil = hasil.filter((d) => d.dihapus !== true);
+    if (nama === 'berita' || nama === 'event') hasil = hasil.filter((d) => d.terbit !== false);
     return hasil.length ? hasil : contoh[nama] || [];
   } catch (e) {
     console.error(`[data] gagal membaca koleksi ${nama}:`, e.message);
@@ -80,7 +78,8 @@ export async function ambilSatu(nama, slug) {
       },
       limit: 1,
     });
-    return hasil[0] || (contoh[nama] || []).find((x) => x.slug === slug) || null;
+    const ketemu = hasil.find((d) => d.dihapus !== true);
+    return ketemu || (contoh[nama] || []).find((x) => x.slug === slug) || null;
   } catch (e) {
     console.error(`[data] gagal membaca ${nama}/${slug}:`, e.message);
     return (contoh[nama] || []).find((x) => x.slug === slug) || null;
