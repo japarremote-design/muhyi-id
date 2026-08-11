@@ -5,6 +5,14 @@ export const site = {
   kota: 'Bangkalan, Madura',
   slogan: 'Aku Apa Adanya Saja',
   pembuat: { nama: 'Qfaz Digital', url: 'https://qfazdigital.my.id/' },
+
+  /**
+   * Daftar ini HANYA untuk menampilkan pesan yang ramah di panel pengelola.
+   * Kunci yang sesungguhnya tetap di firestore.rules — itu yang dijalankan
+   * server Google dan tidak bisa diakali dari browser.
+   * Kalau menambah pengelola, ubah di DUA tempat: di sini dan di firestore.rules.
+   */
+  pengelola: ['qfazdigital@gmail.com', 'muhyibcp@gmail.com'],
   deskripsi:
     'Ketua Dewan Kesehatan Rakyat Bangkalan. Relawan sosial, motivator, akademisi, praktisi, dan entrepreneur asal Bangkalan, Madura. Kirim aspirasi Anda langsung dari halaman ini.',
   wa: '62817799996', // 0817-799-996 dalam format internasional
