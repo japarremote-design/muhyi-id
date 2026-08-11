@@ -22,12 +22,14 @@
     color: var(--tinta);
     overscroll-behavior-y: none;
   }
-  /* Ruang untuk bar menu bawah di HP + area aman iPhone/Android gesture bar */
-  main {
-    padding-bottom: calc(var(--bar-bawah) + env(safe-area-inset-bottom) + 1rem);
+  /* Ruang untuk bar menu bawah di HP + area aman gesture bar.
+     Dipasang di footer, bukan main — kalau di main, baris terakhir
+     footer justru tertutup bar menu. */
+  footer {
+    padding-bottom: calc(var(--bar-bawah) + env(safe-area-inset-bottom) + 0.75rem);
   }
   @media (min-width: 768px) {
-    main { padding-bottom: 0; }
+    footer { padding-bottom: 0; }
   }
   ::selection { background: var(--gold); color: var(--burgundy-dalam); }
   :focus-visible {
@@ -108,6 +110,14 @@
   .prosa h2 { font-size: 1.35rem; font-weight: 700; margin: 1.6rem 0 .6rem; }
   .prosa ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 1rem; }
   .prosa a { color: var(--burgundy); text-decoration: underline; text-underline-offset: 3px; }
+}
+
+/* Saat HP diputar ke lanskap, layar jadi pendek. Bar bawah dilipat
+   supaya isi halaman tidak terhimpit; menu atas yang mengambil alih. */
+@media (max-width: 767px) and (orientation: landscape) and (max-height: 480px) {
+  :root { --bar-bawah: 0rem; }
+  .bar-bawah-hp { display: none; }
+  .menu-atas-hp { display: flex; }
 }
 
 /* Hormati preferensi kurangi gerak */
