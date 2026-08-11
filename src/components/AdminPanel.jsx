@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
+import { addDoc, collection, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { unggahGambar } from '@/lib/unggah';
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import Ikon from './Ikon';
 import Logo from './Logo';
@@ -49,8 +51,6 @@ export default function AdminPanel() {
   const ubah = (k) => (e) =>
     setF((v) => ({ ...v, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
 
-  const token = () => user?.getIdToken();
-
   /* ——— Tarik data dari portal berita luar ——— */
   const tarik = async () => {
     if (!tautan.trim()) return;
@@ -85,31 +85,20 @@ export default function AdminPanel() {
     }
   };
 
-  /* ——— Unggah gambar ke Cloudinary; balikkan URL-nya ——— */
-  const keCloudinary = (berkas) =>
-    new Promise((selesai) => {
-      setSibuk('unggah');
-      const baca = new FileReader();
-      baca.onload = async () => {
-        try {
-          const res = await fetch('/api/upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${await token()}` },
-            body: JSON.stringify({ dataUrl: baca.result, folder: `muhyi-id/${f.koleksi}` }),
-          });
-          const h = await res.json();
-          if (!res.ok) throw new Error(h.pesan);
-          setKabar({ jenis: 'baik', teks: 'Gambar tersimpan di Cloudinary.' });
-          selesai(h.url);
-        } catch (err) {
-          setKabar({ jenis: 'galat', teks: err.message });
-          selesai(null);
-        } finally {
-          setSibuk('');
-        }
-      };
-      baca.readAsDataURL(berkas);
-    });
+  /* ——— Unggah gambar ke Cloudinary langsung dari browser ——— */
+  const keCloudinary = async (berkas) => {
+    setSibuk('unggah');
+    try {
+      const url = await unggahGambar(berkas, `muhyi-id/${f.koleksi}`);
+      setKabar({ jenis: 'baik', teks: 'Gambar tersimpan di Cloudinary.' });
+      return url;
+    } catch (err) {
+      setKabar({ jenis: 'galat', teks: err.message });
+      return null;
+    } finally {
+      setSibuk('');
+    }
+  };
 
   const unggahSampul = async (e) => {
     const berkas = e.target.files?.[0];
@@ -123,18 +112,39 @@ export default function AdminPanel() {
     setSibuk('simpan');
     setKabar(null);
     try {
-      const res = await fetch('/api/berita', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${await token()}` },
-        body: JSON.stringify({ ...f, slug: f.slug || slugify(f.judul) }),
-      });
-      const h = await res.json();
-      if (!res.ok) throw new Error(h.pesan);
+      const data = {
+        judul: f.judul.trim(),
+        slug: f.slug?.trim() || slugify(f.judul),
+        ringkasan: f.ringkasan.trim(),
+        isi: f.isi,
+        gambar: f.gambar,
+        kategori: f.kategori,
+        periode: f.periode,
+        organisasi: f.organisasi,
+        peran: f.peran,
+        lokasi: f.lokasi,
+        bidang: f.bidang,
+        jenis: f.kategori,
+        sumberJenis: f.sumberUrl ? 'luar' : 'sendiri',
+        sumberUrl: f.sumberUrl,
+        sumberNama: f.sumberNama,
+        terbit: f.terbit,
+        tanggal: f.tanggal ? new Date(f.tanggal) : new Date(),
+        diperbarui: serverTimestamp(),
+        penulis: user.email || '',
+      };
+      if (f.id) await setDoc(doc(db, f.koleksi, f.id), data, { merge: true });
+      else await addDoc(collection(db, f.koleksi), data);
+
       setKabar({ jenis: 'baik', teks: 'Tersimpan. Halaman publik menyegarkan isinya dalam ±1 menit.' });
       setF({ ...kosong, koleksi: f.koleksi });
       setTautan('');
     } catch (err) {
-      setKabar({ jenis: 'galat', teks: err.message });
+      console.error(err);
+      setKabar({
+        jenis: 'galat',
+        teks: `Gagal menyimpan: ${err.message}. Pastikan email ${user.email} terdaftar di firestore.rules.`,
+      });
     } finally {
       setSibuk('');
     }
@@ -197,7 +207,7 @@ export default function AdminPanel() {
 
       {tab === 'aspirasi' ? (
         <div className="mt-6">
-          <KotakAspirasi token={token} lapor={setKabar} />
+          <KotakAspirasi lapor={setKabar} />
         </div>
       ) : (
         <form onSubmit={simpan} className="mt-6 space-y-4">

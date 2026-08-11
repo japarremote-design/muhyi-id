@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, orderBy, query, limit } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query, limit, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { tanggalID, nomorWA } from '@/lib/util';
 import Ikon from './Ikon';
 
@@ -15,7 +15,7 @@ const ALUR = [
 
 const gaya = (s) => ALUR.find((a) => a.id === s)?.warna || ALUR[0].warna;
 
-export default function KotakAspirasi({ token, lapor }) {
+export default function KotakAspirasi({ lapor }) {
   const [daftar, setDaftar] = useState([]);
   const [muat, setMuat] = useState(true);
   const [saring, setSaring] = useState('semua');
@@ -60,16 +60,10 @@ export default function KotakAspirasi({ token, lapor }) {
     const sebelum = daftar;
     setDaftar((d) => d.map((a) => (a.id === id ? { ...a, ...isi } : a)));
     try {
-      const res = await fetch('/api/aspirasi', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${await token()}` },
-        body: JSON.stringify({ id, ...isi }),
-      });
-      const h = await res.json();
-      if (!res.ok) throw new Error(h.pesan);
+      await updateDoc(doc(db, 'aspirasi', id), { ...isi, diperbarui: serverTimestamp() });
     } catch (e) {
       setDaftar(sebelum);
-      lapor?.({ jenis: 'galat', teks: e.message });
+      lapor?.({ jenis: 'galat', teks: `Perubahan gagal disimpan: ${e.message}` });
     } finally {
       setSibuk('');
     }
@@ -79,11 +73,7 @@ export default function KotakAspirasi({ token, lapor }) {
     if (!window.confirm(`Hapus aspirasi dari ${nama}? Tindakan ini tidak bisa dibatalkan.`)) return;
     setSibuk(id);
     try {
-      const res = await fetch(`/api/aspirasi?id=${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${await token()}` },
-      });
-      if (!res.ok) throw new Error((await res.json()).pesan);
+      await deleteDoc(doc(db, 'aspirasi', id));
       setDaftar((d) => d.filter((a) => a.id !== id));
     } catch (e) {
       lapor?.({ jenis: 'galat', teks: e.message });

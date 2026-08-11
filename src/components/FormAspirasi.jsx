@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { site, waLink } from '@/lib/site';
+import { db } from '@/lib/firebase';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import Ikon from './Ikon';
 
 const KATEGORI = ['Kesehatan', 'Pendidikan', 'Ekonomi & UMKM', 'Infrastruktur', 'Sosial & Bantuan', 'Umum'];
@@ -16,17 +18,21 @@ export default function FormAspirasi() {
     e.preventDefault();
     setGalat('');
     setStatus('kirim');
+    if (data.jebakan) { setStatus('selesai'); return; } // honeypot: spam diabaikan diam-diam
     try {
-      const res = await fetch('/api/aspirasi', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+      await addDoc(collection(db, 'aspirasi'), {
+        nama: data.nama.trim().slice(0, 100),
+        kontak: data.kontak.trim().slice(0, 100),
+        wilayah: data.wilayah.trim().slice(0, 100),
+        kategori: data.kategori,
+        pesan: data.pesan.trim().slice(0, 4000),
+        status: 'baru',
+        tanggal: serverTimestamp(),
       });
-      const hasil = await res.json();
-      if (!res.ok) throw new Error(hasil.pesan || 'Aspirasi belum terkirim.');
       setStatus('selesai');
     } catch (err) {
-      setGalat(err.message);
+      console.error(err);
+      setGalat('Aspirasi belum tersimpan.');
       setStatus('siap');
     }
   };
