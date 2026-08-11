@@ -39,15 +39,17 @@ export default function KotakAspirasi({ lapor }) {
   useEffect(() => { ambil(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, []);
 
   const jumlah = useMemo(() => {
-    const h = { semua: daftar.length };
-    for (const a of ALUR) h[a.id] = daftar.filter((d) => (d.status || 'baru') === a.id).length;
+    const aktif = daftar.filter((d) => d.dihapus !== true);
+    const h = { semua: aktif.length, sampah: daftar.filter((d) => d.dihapus === true).length };
+    for (const a of ALUR) h[a.id] = aktif.filter((d) => (d.status || 'baru') === a.id).length;
     return h;
   }, [daftar]);
 
   const tampil = useMemo(() => {
     const kata = cari.trim().toLowerCase();
     return daftar
-      .filter((a) => saring === 'semua' || (a.status || 'baru') === saring)
+      .filter((a) => (saring === 'sampah' ? a.dihapus === true : a.dihapus !== true))
+      .filter((a) => saring === 'semua' || saring === 'sampah' || (a.status || 'baru') === saring)
       .filter((a) =>
         !kata ||
         [a.nama, a.wilayah, a.kategori, a.pesan].some((v) => (v || '').toLowerCase().includes(kata)),
@@ -69,8 +71,12 @@ export default function KotakAspirasi({ lapor }) {
     }
   };
 
-  const hapus = async (id, nama) => {
-    if (!window.confirm(`Hapus aspirasi dari ${nama}? Tindakan ini tidak bisa dibatalkan.`)) return;
+  /** Hapus lunak: masuk kotak sampah, masih bisa dipulihkan. */
+  const buang = (id) => perbarui(id, { dihapus: true });
+  const pulihkan = (id) => perbarui(id, { dihapus: false });
+
+  const musnahkan = async (id, nama) => {
+    if (!window.confirm(`Hapus aspirasi dari ${nama} selamanya? Ini tidak bisa dibatalkan.`)) return;
     setSibuk(id);
     try {
       await deleteDoc(doc(db, 'aspirasi', id));
@@ -86,13 +92,13 @@ export default function KotakAspirasi({ lapor }) {
     const sama = buka === a.id;
     setBuka(sama ? null : a.id);
     setDraf(a.catatan || '');
-    if (!sama && (a.status || 'baru') === 'baru') perbarui(a.id, { status: 'dibaca' });
+    if (!sama && a.dihapus !== true && (a.status || 'baru') === 'baru') perbarui(a.id, { status: 'dibaca' });
   };
 
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2">
-        {[{ id: 'semua', label: 'Semua' }, ...ALUR].map((s) => (
+        {[{ id: 'semua', label: 'Semua' }, ...ALUR, { id: 'sampah', label: 'Sampah' }].map((s) => (
           <button
             key={s.id}
             onClick={() => setSaring(s.id)}
@@ -196,12 +202,29 @@ export default function KotakAspirasi({ lapor }) {
                       <span className="text-xs text-ink/50">Nomor WA tidak tersedia — balas lewat kontak yang ditulis pelapor.</span>
                     )}
 
-                    <button
-                      onClick={() => hapus(a.id, a.nama)}
-                      className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-burgundy-700 hover:bg-burgundy-600/10"
-                    >
-                      <Ikon nama="tutup" className="h-3.5 w-3.5" /> Hapus
-                    </button>
+                    {a.dihapus ? (
+                      <span className="ml-auto flex gap-2">
+                        <button
+                          onClick={() => pulihkan(a.id)}
+                          className="rounded-full bg-burgundy-800 px-4 py-2 text-sm font-semibold text-cream hover:bg-burgundy-950"
+                        >
+                          Pulihkan
+                        </button>
+                        <button
+                          onClick={() => musnahkan(a.id, a.nama)}
+                          className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-burgundy-700 hover:bg-burgundy-600/10"
+                        >
+                          <Ikon nama="tutup" className="h-3.5 w-3.5" /> Hapus permanen
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => buang(a.id)}
+                        className="ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-burgundy-700 hover:bg-burgundy-600/10"
+                      >
+                        <Ikon nama="tutup" className="h-3.5 w-3.5" /> Hapus
+                      </button>
+                    )}
                   </div>
 
                   {a.catatan && a.catatan !== draf && (

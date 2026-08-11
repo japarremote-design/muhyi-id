@@ -8,6 +8,7 @@ import Ikon from './Ikon';
 import Logo from './Logo';
 import Editor from './Editor';
 import KotakAspirasi from './KotakAspirasi';
+import DaftarKonten from './DaftarKonten';
 import { slugify } from '@/lib/util';
 import { site } from '@/lib/site';
 
@@ -106,6 +107,20 @@ export default function AdminPanel() {
     if (!berkas) return;
     const url = await keCloudinary(berkas);
     if (url) setF((v) => ({ ...v, gambar: url }));
+  };
+
+  const sunting = (item) => {
+    const t = item.tanggal?.toDate ? item.tanggal.toDate() : new Date(item.tanggal || Date.now());
+    setF({
+      ...kosong,
+      ...item,
+      koleksi: item.koleksi,
+      tanggal: t.toISOString().slice(0, 10),
+      terbit: item.terbit !== false,
+    });
+    setTab('tulis');
+    setKabar({ jenis: 'baik', teks: `Sedang menyunting "${item.judul}". Klik Simpan untuk memperbarui.` });
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const simpan = async (e) => {
@@ -211,7 +226,7 @@ export default function AdminPanel() {
       </div>
 
       <div className="mt-6 flex gap-2">
-        {[['tulis', 'Tulis konten'], ['aspirasi', 'Aspirasi masuk']].map(([id, label]) => (
+        {[['tulis', 'Tulis konten'], ['daftar', 'Daftar konten'], ['aspirasi', 'Aspirasi masuk']].map(([id, label]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
@@ -236,8 +251,26 @@ export default function AdminPanel() {
         <div className="mt-6">
           <KotakAspirasi lapor={setKabar} />
         </div>
+      ) : tab === 'daftar' ? (
+        <div className="mt-6">
+          <DaftarKonten onSunting={sunting} lapor={setKabar} />
+        </div>
       ) : (
         <form onSubmit={simpan} className="mt-6 space-y-4">
+          {f.id && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gold-500/50 bg-gold-200/40 px-4 py-3">
+              <span className="text-sm font-semibold text-burgundy-900">
+                Menyunting konten yang sudah ada — tidak membuat salinan baru.
+              </span>
+              <button
+                type="button"
+                onClick={() => { setF({ ...kosong, koleksi: f.koleksi }); setTautan(''); setKabar(null); }}
+                className="rounded-full border border-burgundy-950/20 px-3.5 py-1.5 text-sm font-semibold text-burgundy-800 hover:bg-white"
+              >
+                Batal, tulis baru
+              </button>
+            </div>
+          )}
           {/* Tarik data link luar */}
           <div className="gerbang-kecil border border-gold-500/45 bg-gold-200/30 p-5">
             <p className="label text-burgundy-700">Posting dari portal berita luar</p>
