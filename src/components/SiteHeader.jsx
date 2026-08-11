@@ -17,7 +17,7 @@ export default function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Menu utama">
+        <nav className="menu-atas-hp hidden items-center gap-1 overflow-x-auto md:flex" aria-label="Menu utama">
           {menu.slice(1).map((m) => {
             const aktif = path === m.href;
             return (

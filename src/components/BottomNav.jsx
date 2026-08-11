@@ -78,7 +78,7 @@ export default function BottomNav() {
 
       {/* Bar menu bawah — jangkauan ibu jari */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-gold-500/30 bg-burgundy-950 shadow-[0_-8px_24px_-12px_rgba(46,10,23,.55)] backdrop-blur md:hidden"
+        className="bar-bawah-hp fixed inset-x-0 bottom-0 z-50 border-t border-gold-500/30 bg-burgundy-950 shadow-[0_-8px_24px_-12px_rgba(46,10,23,.55)] backdrop-blur md:hidden"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         aria-label="Menu bawah"
       >
