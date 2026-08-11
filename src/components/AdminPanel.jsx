@@ -9,6 +9,7 @@ import Logo from './Logo';
 import Editor from './Editor';
 import KotakAspirasi from './KotakAspirasi';
 import { slugify } from '@/lib/util';
+import { site } from '@/lib/site';
 
 const KOLEKSI = [
   { id: 'berita', label: 'Kabar / Berita' },
@@ -167,6 +168,32 @@ export default function AdminPanel() {
           Masuk dengan Google
         </button>
         {kabar && <p className="mt-4 text-sm font-semibold text-burgundy-700">{kabar.teks}</p>}
+      </div>
+    );
+  }
+
+  const berhak = site.pengelola
+    .map((e) => e.toLowerCase())
+    .includes((user.email || '').toLowerCase());
+
+  if (!berhak) {
+    return (
+      <div className="mx-auto max-w-sm px-4 py-24 text-center">
+        <Logo className="mx-auto h-16 w-16 opacity-60" />
+        <h1 className="mt-6 font-display text-2xl font-semibold text-burgundy-950">
+          Akun ini bukan pengelola
+        </h1>
+        <p className="mt-3 leading-relaxed text-ink/70">
+          <span className="font-semibold">{user.email}</span> tidak terdaftar sebagai pengelola
+          muhyi.id, jadi halaman ini tidak bisa dibuka.
+        </p>
+        <p className="mt-3 text-sm text-ink/60">
+          Kalau seharusnya bisa, kemungkinan browser memilih akun Google yang berbeda.
+          Keluar lalu masuk lagi, dan pilih akun yang benar.
+        </p>
+        <button onClick={() => signOut(auth)} className="tombol-utama mt-7">
+          Keluar dan ganti akun
+        </button>
       </div>
     );
   }
