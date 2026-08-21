@@ -4,18 +4,21 @@ import JudulBagian from '@/components/JudulBagian';
 import KartuBerita from '@/components/KartuBerita';
 import Ikon from '@/components/Ikon';
 import { ambilKoleksi } from '@/lib/data';
+import { versiKecil } from '@/lib/unggah';
 import { site } from '@/lib/site';
 import { tanggalID } from '@/lib/util';
 
 export const revalidate = 60;
 
 export default async function Beranda() {
-  const [berita, gagasan, pengabdian, event] = await Promise.all([
+  const [berita, gagasan, pengabdian, event, galeri] = await Promise.all([
     ambilKoleksi('berita', { batas: 5 }),
     ambilKoleksi('gagasan', { batas: 3 }),
     ambilKoleksi('pengabdian', { batas: 4 }),
     ambilKoleksi('event', { batas: 3 }),
+    ambilKoleksi('galeri', { batas: 3 }),
   ]);
+  const fotoBeranda = galeri.flatMap((a) => a.foto || []).slice(0, 8);
 
   return (
     <>
@@ -110,6 +113,31 @@ export default async function Beranda() {
                 <h3 className="mt-2 font-display text-lg font-semibold text-burgundy-950">{e.judul}</h3>
                 <p className="mt-1 text-sm text-ink/70">{e.lokasi}</p>
               </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Galeri */}
+      {fotoBeranda.length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 pb-16">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <JudulBagian eyebrow="Galeri" judul="Yang terekam di lapangan" />
+            <Link href="/galeri" className="inline-flex items-center gap-1.5 font-semibold text-burgundy-700 hover:text-burgundy-950">
+              Semua foto <Ikon nama="panah" className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+            {fotoBeranda.map((url) => (
+              <Link key={url} href="/galeri" className="gerbang-kecil group relative aspect-square overflow-hidden bg-burgundy-900">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={versiKecil(url, 400)}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+              </Link>
             ))}
           </div>
         </section>

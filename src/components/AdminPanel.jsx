@@ -9,6 +9,7 @@ import Logo from './Logo';
 import Editor from './Editor';
 import KotakAspirasi from './KotakAspirasi';
 import DaftarKonten from './DaftarKonten';
+import KelolaGaleri from './KelolaGaleri';
 import { slugify } from '@/lib/util';
 import { site } from '@/lib/site';
 
@@ -226,7 +227,7 @@ export default function AdminPanel() {
       </div>
 
       <div className="mt-6 flex gap-2">
-        {[['tulis', 'Tulis konten'], ['daftar', 'Daftar konten'], ['aspirasi', 'Aspirasi masuk']].map(([id, label]) => (
+        {[['tulis', 'Tulis konten'], ['daftar', 'Daftar konten'], ['galeri', 'Galeri foto'], ['aspirasi', 'Aspirasi masuk']].map(([id, label]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
@@ -254,6 +255,10 @@ export default function AdminPanel() {
       ) : tab === 'daftar' ? (
         <div className="mt-6">
           <DaftarKonten onSunting={sunting} lapor={setKabar} />
+        </div>
+      ) : tab === 'galeri' ? (
+        <div className="mt-6">
+          <KelolaGaleri lapor={setKabar} />
         </div>
       ) : (
         <form onSubmit={simpan} className="mt-6 space-y-4">

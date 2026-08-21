@@ -77,6 +77,16 @@ export const contoh = {
     { id: 'e2', judul: 'Pendiri Battar Madu Premium', organisasi: 'Battar Madu', periode: '—', jenis: 'Usaha', tanggal: '2018-01-01T00:00:00.000Z' },
     { id: 'e3', judul: 'Universitas Terbuka', organisasi: 'Akademik', periode: '—', jenis: 'Pendidikan', tanggal: '2015-01-01T00:00:00.000Z' },
   ],
+  galeri: [
+    {
+      id: 'gal1',
+      judul: 'Posyandu keliling desa pesisir',
+      ringkasan: 'Timbang balita, cek tensi, dan penyuluhan gizi di balai desa.',
+      lokasi: 'Socah, Bangkalan',
+      tanggal: '2026-07-18T02:00:00.000Z',
+      foto: [],
+    },
+  ],
   event: [
     {
       id: 'v1',

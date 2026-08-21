@@ -49,6 +49,7 @@ export const menu = [
   { label: 'Gagasan', href: '/gagasan', utama: true, ikon: 'bulb' },
   { label: 'Pengabdian', href: '/pengabdian', utama: true, ikon: 'hands' },
   { label: 'Aspirasi', href: '/aspirasi', utama: false, ikon: 'chat' },
+  { label: 'Galeri', href: '/galeri', utama: false, ikon: 'foto' },
   { label: 'Event', href: '/event', utama: false, ikon: 'calendar' },
   { label: 'Kontak', href: '/kontak', utama: false, ikon: 'phone' },
 ];

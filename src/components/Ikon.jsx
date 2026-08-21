@@ -13,6 +13,8 @@ const jalur = {
   tutup: 'M6 6l12 12M18 6 6 18',
   unduh: 'M12 4v10m0 0 4-4m-4 4-4-4M5 19h14',
   cek: 'm5 12.5 4.5 4.5L19 7',
+  foto: 'M4 6h16v13H4zM4 16l4.5-4.5 3 3 3.5-3.5L20 15M8.5 9.5h.01',
+  kiri: 'm15 5-7 7 7 7',
 };
 
 export default function Ikon({ nama, className = 'h-5 w-5', ...sisa }) {
