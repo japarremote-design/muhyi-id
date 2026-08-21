@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { menu, site, waLink } from '@/lib/site';
+import { menu } from '@/lib/site';
 import Logo from './Logo';
 import Ikon from './Ikon';
 
@@ -36,14 +36,6 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <a
-            href={waLink()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden rounded-full border border-gold-500/40 px-3.5 py-2 text-sm font-semibold text-gold-300 transition hover:bg-gold-500/10 lg:inline-flex"
-          >
-            {site.waTampil}
-          </a>
           <Link
             href="/aspirasi"
             className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 px-4 py-2 text-sm font-bold text-burgundy-950 transition hover:brightness-110"
